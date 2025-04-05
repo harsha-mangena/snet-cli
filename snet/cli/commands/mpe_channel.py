@@ -18,6 +18,7 @@ from snet.cli.utils.agix2cogs import cogs2stragix
 from snet.cli.utils.ipfs_utils import get_from_ipfs_and_checkhash
 from snet.cli.utils.utils import abi_decode_struct_to_dict, abi_get_element_by_name, \
     compile_proto, type_converter, bytesuri_to_hash, get_file_from_filecoin, download_and_safe_extract_proto
+import fickling
 
 
 # we inherit MPEServiceCommand because we need _get_service_metadata_from_registry
@@ -51,7 +52,7 @@ class MPEChannelCommand(OrganizationCommand):
                 pickle.dump(empty_dict, f)
         else:
             with open(channels_file, "rb") as f:
-                load_dict = pickle.load(f)
+                load_dict = fickling.load(f)
             last_read_block = load_dict["last_read_block"]
             channels = load_dict["channels"]
 
@@ -72,7 +73,7 @@ class MPEChannelCommand(OrganizationCommand):
     def _get_channels_from_cache(self):
         self._update_channels_cache()
         with open(self._get_channels_cache_file(), "rb") as f:
-            load_dict = pickle.load(f)
+            load_dict = fickling.load(f)
         return load_dict["channels"]
 
     def _event_data_args_to_dict(self, event_data):
@@ -138,7 +139,7 @@ class MPEChannelCommand(OrganizationCommand):
 
     def _read_service_info(self, org_id, service_id):
         fn = self._get_service_info_file(org_id, service_id)
-        return pickle.load(open(fn, "rb"))
+        return fickling.load(open(fn, "rb"))
 
     def is_service_initialized(self):
         return os.path.isfile(self._get_service_info_file(self.args.org_id, self.args.service_id))
@@ -170,7 +171,7 @@ class MPEChannelCommand(OrganizationCommand):
 
     def _read_org_info(self, org_id):
         fn = self._get_org_info_file(org_id)
-        return pickle.load(open(fn, "rb"))
+        return fickling.load(open(fn, "rb"))
 
     def is_org_initialized(self):
         return os.path.isfile(self._get_org_info_file(self.args.org_id))
